@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package protobuf;
+option go_package = "example/auth";
+
+import "google/protobuf/empty.proto";
+
+service Auth {
+  // Создать сессию (Вход)
+  rpc CreateSession(FullUserData) returns (google.protobuf.Empty);
+  // Проверить токен (вызывается Catalog Service)
+  rpc GetCurrentUser(SessionData) returns (User);
+  // Удалить сессию (Выход)
+  rpc Logout(SessionData) returns (google.protobuf.Empty);
+}
+
+message FullUserData {
+  User user = 1;
+  string SessionID = 2;
+}
+
+message SessionData {
+  string SessionID = 1;
+}
+
+message User {
+  uint32 ID = 1;
+  string Email = 2;
+  bool IsAuth = 4;
+}

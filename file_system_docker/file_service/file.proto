@@ -1,0 +1,13 @@
+syntax = "proto3";
+package protobuf;
+option go_package = "";
+import "google/protobuf/empty.proto";
+
+service File {
+  rpc DeleteFile(DeleteFileRequest) returns (google.protobuf.Empty);
+}
+
+message DeleteFileRequest {
+  string UUID = 1;
+  uint32 UserID = 2;
+}

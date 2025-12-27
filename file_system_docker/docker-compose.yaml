@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # --- База данных ---
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # --- заглушка сервиса авторизации ---
+  auth-service:
+    build: ./auth_service
+    container_name: auth-service
+    ports:
+      - "50053:50053"
+    environment:
+      - PORT=50053
+
+  # --- заглушка файлового сервиса ---
+  file-service:
+    build: ./file_service
+    container_name: file-service
+    ports:
+      - "50052:50052"
+    environment:
+      - PORT=50052
+
+  # --- Главный файл ---
+  catalog-service:
+    build: ./catalog_service
+    container_name: catalog-service-1
+    ports:
+      - "50051:50051"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/
+      - AUTH_SERVICE_ADDR=auth-service:50053
+      - FILE_SERVICE_ADDR=file-service:50052
+      - PORT=50051
+    depends_on:
+      - mongo
+      - auth-service
+      - file-service
+
+volumes:
+  mongo_data:

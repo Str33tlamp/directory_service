@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package catalog;
+
+service CatalogService {
+    rpc CreateDirectory (CreateDirectoryRequest) returns (DirectoryResponse);
+    rpc UpdateDirectory (UpdateDirectoryRequest) returns (DirectoryResponse);
+    rpc DeleteDirectory (DeleteDirectoryRequest) returns (DeleteResponse);
+    rpc GetDirectoryContent (GetDirectoryRequest) returns (DirectoryContentResponse);
+
+    rpc RegisterFile (RegisterFileRequest) returns (FileResponse);
+    rpc UpdateFile (UpdateFileRequest) returns (FileResponse);
+    rpc DeleteFile (DeleteFileRequest) returns (DeleteResponse);
+}
+
+// --- Сообщения ---
+
+message DirectoryResponse {
+    string id = 1;
+    string name = 2;
+    string parent_id = 3;
+    bool is_public = 4;
+    uint32 owner_id = 5;            // Владелец
+    repeated uint32 allowed_readers = 6; // Список ID для чтения
+    repeated uint32 allowed_writers = 7; // Список ID для записи
+}
+
+message FileResponse {
+    string id = 1;
+    string name = 2;
+    string external_file_id = 3;
+    bool is_public = 4;
+    uint32 owner_id = 5;
+    repeated uint32 allowed_readers = 6;
+    repeated uint32 allowed_writers = 7;
+}
+
+message CreateDirectoryRequest {
+    string name = 1;
+    string parent_id = 2;
+    bool is_public = 3;
+    repeated uint32 allowed_readers = 4; // Можно задать сразу при создании
+    repeated uint32 allowed_writers = 5;
+}
+
+message UpdateDirectoryRequest {
+    string id = 1;
+    string name = 2;
+    string parent_id = 3;
+    bool is_public = 4;
+    repeated uint32 allowed_readers = 5; // Обновление прав
+    repeated uint32 allowed_writers = 6;
+}
+
+message DeleteDirectoryRequest {
+    string id = 1;
+}
+
+message GetDirectoryRequest {
+    string directory_id = 1;
+}
+
+message DirectoryContentResponse {
+    repeated DirectoryResponse directories = 1;
+    repeated FileResponse files = 2;
+}
+
+message RegisterFileRequest {
+    string name = 1;
+    string parent_directory_id = 2;
+    string external_file_id = 3;
+    bool is_public = 4;
+    repeated uint32 allowed_readers = 5;
+    repeated uint32 allowed_writers = 6;
+}
+
+message UpdateFileRequest {
+    string id = 1;
+    string name = 2;
+    bool is_public = 3;
+    repeated uint32 allowed_readers = 4;
+    repeated uint32 allowed_writers = 5;
+}
+
+message DeleteFileRequest {
+    string id = 1;
+}
+
+message DeleteResponse {
+    bool success = 1;
+    string message = 2;
+}
